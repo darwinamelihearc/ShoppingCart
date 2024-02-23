@@ -29,10 +29,24 @@
         <input type="text" class="form-control" placeholder="Price" v-model="newProduct.price">
       </div>
       <button class="btn btn-primary" @click="addProduct">Add</button>
-      
+
+      <div class="filter-section mt-4">
+        <input type="text" class="form-control mb-3" placeholder="Filter by name..." v-model="filter">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" v-model="onlyAvailable" id="availableCheck">
+          <label class="form-check-label" for="availableCheck">
+            Available products only
+          </label>
+        </div>
+        <select class="form-select mt-3" v-model="sortBy">
+          <option value="name">Name</option>
+          <option value="price">Price</option>
+        </select>
+      </div>
+
       <h2 class="mt-5">Products</h2>
       <ul class="list-group">
-        <li class="list-group-item" v-for="product in products" :key="product.id">
+        <li class="list-group-item" v-for="product in filteredProducts" :key="product.id">
           <div class="product-title">{{ product.name }}</div>
           <div class="product-attributes">ID: {{ product.id }} - {{ product.price }}.-</div>
           <span v-if="product.unavailable" class="badge bg-secondary">Indisponible</span>
@@ -56,8 +70,25 @@
           newProduct: {
             name: '',
             price: ''
-          }
+          },
+          filter: '',
+          onlyAvailable: false,
+          sortBy: 'name'
         };
+      },
+      computed: {
+        filteredProducts() {
+          return this.products.filter(product => {
+            return (!this.onlyAvailable || !product.unavailable) &&
+                   product.name.toLowerCase().includes(this.filter.toLowerCase());
+          }).sort((a, b) => {
+            if (this.sortBy === 'name') {
+              return a.name.localeCompare(b.name);
+            } else if (this.sortBy === 'price') {
+              return parseFloat(a.price) - parseFloat(b.price);
+            }
+          });
+        }
       },
       methods: {
         addProduct() {
