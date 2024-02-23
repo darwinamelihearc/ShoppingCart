@@ -50,11 +50,12 @@
       <h2 class="mt-5">Products</h2>
       <ul class="list-group">
         <li class="list-group-item" v-for="product in filteredProducts" :key="product.id">
-          <div class="product-title">{{ product.name }}</div>
-          <div class="product-attributes">ID: {{ product.id }} - {{ product.price }}.-</div>
-          <span v-if="product.unavailable" class="badge bg-secondary">Indisponible</span>
-          <p></p>
-          <button class="btn btn-sm btn-success" @click="addToCart(product)" :disabled="product.unavailable">Add to cart</button>
+          <img class="product-thumbnail" :src="product.thumbnail" alt="Product Image">
+          <div class="product-title">{{ product.title }}</div>
+          <div class="product-attributes">
+            {{ product.description }} - Price: {{ product.price }} - In Stock: {{ product.stock }}
+          </div>
+          <button class="btn btn-sm btn-success" @click="addToCart(product)" :disabled="product.stock < 1">Add to cart</button>
         </li>
       </ul>
 
@@ -81,12 +82,7 @@
     createApp({
       data() {
         return {
-          products: [
-            { id: 1, name: 'iPhone 12', price: 799, unavailable: false },
-            { id: 2, name: 'Samsung Galaxy S21', price: 999, unavailable: false },
-            { id: 3, name: 'OnePlus 9', price: 699, unavailable: false },
-            { id: 4, name: 'Google Pixel 5', price: 'Indisponible', unavailable: true },
-          ],
+          products: [],
           newProduct: { name: '', price: '' },
           filter: '',
           onlyAvailable: false,
@@ -139,8 +135,26 @@
         removeFromCart(index) {
           this.cart.splice(index, 1);
         },
+      },
+      mounted() {
+        fetch('https://dummyjson.com/products')
+          .then(response => response.json())
+          .then(data => {
+            console.log(data); // Check si on reçoit bien les objets
+            this.products = data.products.map(product => ({
+              id: product.id,
+              name: product.title,
+              price: product.price,
+              thumbnail: product.thumbnail,
+              description: product.description,
+              stock: product.stock,
+              unavailable: product.stock < 1
+            }));
+          })
+          .catch(error => console.error('Error loading products:', error));
       }
     }).mount('#app');
   </script>
 </body>
+</html>
 </html>
