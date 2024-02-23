@@ -50,6 +50,16 @@
           <div class="product-title">{{ product.name }}</div>
           <div class="product-attributes">ID: {{ product.id }} - {{ product.price }}.-</div>
           <span v-if="product.unavailable" class="badge bg-secondary">Indisponible</span>
+          <button class="btn btn-sm btn-success" @click="addToCart(product)" :disabled="product.unavailable">Add to cart</button>
+        </li>
+      </ul>
+      <h2 class="mt-5">Cart</h2>
+      <ul class="list-group">
+        <li class="list-group-item" v-for="(item, index) in cart" :key="index">
+          <div class="cart-item">{{ item.name }} - Qty: {{ item.quantity }} - {{ item.price }} each - Total: {{ item.quantity * item.price }}.-</div>
+        </li>
+        <li class="list-group-item">
+          <strong>Total:</strong> {{ cartTotal.quantity }} items - {{ cartTotal.price }}.-
         </li>
       </ul>
     </div>
@@ -62,21 +72,23 @@
       data() {
         return {
           products: [
-            { id: 1, name: 'iPhone 12', price: '799', unavailable: false },
-            { id: 2, name: 'Samsung Galaxy S21', price: '999', unavailable: false },
-            { id: 3, name: 'OnePlus 9', price: '699', unavailable: false },
+            { id: 1, name: 'iPhone 12', price: 799, unavailable: false },
+            { id: 2, name: 'Samsung Galaxy S21', price: 999, unavailable: false },
+            { id: 3, name: 'OnePlus 9', price: 699, unavailable: false },
             { id: 4, name: 'Google Pixel 5', price: 'Indisponible', unavailable: true },
           ],
-          newProduct: {
-            name: '',
-            price: ''
-          },
-          filter: '',
-          onlyAvailable: false,
-          sortBy: 'name'
+          cart: [],
         };
       },
       computed: {
+        cartTotal() {
+          const total = this.cart.reduce((acc, item) => {
+            acc.quantity += item.quantity;
+            acc.price += item.quantity * item.price;
+            return acc;
+          }, { quantity: 0, price: 0 });
+          return total;
+        },
         filteredProducts() {
           return this.products.filter(product => {
             return (!this.onlyAvailable || !product.unavailable) &&
@@ -91,6 +103,14 @@
         }
       },
       methods: {
+        addToCart(product) {
+          const found = this.cart.find(item => item.id === product.id);
+          if (found) {
+            found.quantity++;
+          } else {
+            this.cart.push({ ...product, quantity: 1 });
+          }
+        },
         addProduct() {
           if (this.newProduct.name && this.newProduct.price) {
             const newId = this.products.length + 1;
