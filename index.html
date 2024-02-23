@@ -18,33 +18,35 @@
   </style>
 </head>
 <body>
-  <h1>My Site</h1>
-  <div class="container mt-5">
-    <h2>Products</h2>
-    <ul class="list-group">
-      <li class="list-group-item">
-        <div class="product-title">iPhone 12</div>
-        <div class="product-attributes">ID: 1 - 799.-</div>
-      </li>
-      <li class="list-group-item">
-        <div class="product-title">Samsung Galaxy S21</div>
-        <div class="product-attributes">ID: 002 - 999.-</div>
-      </li>
-      <li class="list-group-item">
-        <div class="product-title">OnePlus 9</div>
-        <div class="product-attributes">ID: 003 - 699.-</div>
-      </li>
-      <li class="list-group-item d-flex justify-content-between align-items-center">
-        <div>
-          <div class="product-title">Google Pixel 5</div>
-          <div class="product-attributes">ID: 004</div>
-        </div>
-        <span class="badge bg-secondary">Indisponible</span>
-      </li>
-    </ul>
+  <div id="app">
+    <h1>My Site</h1>
+    <div class="container mt-5">
+      <h2>Products</h2>
+      <ul class="list-group">
+        <li class="list-group-item" v-for="product in products" :key="product.id">
+          <div class="product-title">{{ product.name }}</div>
+          <div class="product-attributes">ID: {{ product.id }} - {{ product.price }}.-</div>
+          <span v-if="product.unavailable" class="badge bg-secondary">Indisponible</span>
+        </li>
+      </ul>
+    </div>
   </div>
+
   <script type="module">
     import { createApp } from "https://unpkg.com/vue@3/dist/vue.esm-browser.js";
+
+    createApp({
+      data() {
+        return {
+          products: [
+            { id: 1, name: 'iPhone 12', price: '799', unavailable: false },
+            { id: 2, name: 'Samsung Galaxy S21', price: '999', unavailable: false },
+            { id: 3, name: 'OnePlus 9', price: '699', unavailable: false },
+            { id: 4, name: 'Google Pixel 5', price: 'Indisponible', unavailable: true },
+          ]
+        };
+      }
+    }).mount('#app');
   </script>
 </body>
 </html>
