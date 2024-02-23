@@ -7,6 +7,9 @@
   <title>Vue Product List with Cart</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
   <style>
+    html {
+      padding: 2%;
+    }
     .product-title {
       font-size: 1.25rem;
       font-weight: bold;
@@ -19,7 +22,7 @@
 </head>
 <body>
   <div id="app">
-    <h1>My Site</h1>
+    <h1>My Shopping Cart</h1>
     <div class="container mt-5">
       <h2>Add Product</h2>
       <div class="mb-3">
@@ -50,6 +53,7 @@
           <div class="product-title">{{ product.name }}</div>
           <div class="product-attributes">ID: {{ product.id }} - {{ product.price }}.-</div>
           <span v-if="product.unavailable" class="badge bg-secondary">Indisponible</span>
+          <p></p>
           <button class="btn btn-sm btn-success" @click="addToCart(product)" :disabled="product.unavailable">Add to cart</button>
         </li>
       </ul>
